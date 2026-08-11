@@ -1,0 +1,39 @@
+# Environment variables and secrets (NEVER COMMIT THESE)
+*.env
+*.env.*
+*.env.local
+.env
+backend/.env
+frontend/.env
+
+# Backend
+backend/venv/
+backend/env/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.db
+backend/*.sqlite3
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/chroma_store/*
+!backend/chroma_store/.gitkeep
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Python & OS Artifacts
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.DS_Store
+Thumbs.db
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
