@@ -64,11 +64,30 @@ def _send_email_smtp_worker(to_email: str, otp_code: str):
         msg.attach(MIMEText(text_body, "plain"))
         msg.attach(MIMEText(html_body, "html"))
 
-        with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as server:
-            server.starttls()
-            server.login(smtp_user, smtp_password)
-            server.sendmail(from_email, [to_email], msg.as_string())
-        print(f"[SUCCESS] Real SMTP Email sent successfully to {to_email} with code {otp_code}!")
+        # Cloud providers like Render block outbound port 587 (STARTTLS).
+        # We support SSL on port 465 directly, and auto-fallback to port 465 SSL if port 587 fails/times out.
+        sent = False
+        if smtp_port == 465:
+            with smtplib.SMTP_SSL(smtp_host, 465, timeout=12) as server:
+                server.login(smtp_user, smtp_password)
+                server.sendmail(from_email, [to_email], msg.as_string())
+            sent = True
+        else:
+            try:
+                with smtplib.SMTP(smtp_host, smtp_port, timeout=6) as server:
+                    server.starttls()
+                    server.login(smtp_user, smtp_password)
+                    server.sendmail(from_email, [to_email], msg.as_string())
+                sent = True
+            except Exception as e587:
+                print(f"[SMTP Notice] Port {smtp_port} failed ({e587}), falling back to SSL port 465...")
+                with smtplib.SMTP_SSL(smtp_host, 465, timeout=12) as server:
+                    server.login(smtp_user, smtp_password)
+                    server.sendmail(from_email, [to_email], msg.as_string())
+                sent = True
+
+        if sent:
+            print(f"[SUCCESS] Real SMTP Email sent successfully to {to_email} with code {otp_code}!")
     except Exception as e:
         print(f"[WARNING] SMTP Send Warning (Check Brevo SMTP in backend/.env): {e}")
 
