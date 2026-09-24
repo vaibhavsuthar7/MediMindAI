@@ -46,7 +46,9 @@ export default function Symptoms() {
         setCheckId(data.check_id)
       }
     } catch (err) {
-      if (err?.response?.status === 401) {
+      if (err?.code === 'ECONNABORTED' || err?.message?.toLowerCase().includes('timeout')) {
+        setError('Server is warming up or processing. Please wait 10 seconds and click Check symptoms again.')
+      } else if (err?.response?.status === 401) {
         setError('Please log in or sign up first to run the clinical symptom triage.')
       } else {
         setError(err?.response?.data?.detail || err?.message || 'Symptom check failed. Please try again.')

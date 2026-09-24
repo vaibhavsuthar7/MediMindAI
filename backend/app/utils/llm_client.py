@@ -80,7 +80,7 @@ def _get_client_and_model() -> Tuple[Any, str]:
     if _client is None or _client_config != current_config:
         if base_url:
             from openai import OpenAI
-            _client = OpenAI(api_key=api_key or "ollama", base_url=base_url, timeout=45.0)
+            _client = OpenAI(api_key=api_key or "ollama", base_url=base_url, timeout=18.0)
         else:
             from groq import Groq
             _client = Groq(api_key=api_key)
