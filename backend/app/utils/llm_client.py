@@ -65,13 +65,19 @@ def _get_client_and_model() -> Tuple[Any, str]:
     """Get initialized OpenAI or Groq client and active model name."""
     global _client, _client_config
 
-    api_key = settings.llm_api_key or settings.groq_api_key
-    model = settings.llm_model or settings.groq_model
-    base_url = settings.llm_base_url or None
+    # Prioritize blazing-fast Groq LPU if groq_api_key is set
+    if settings.groq_api_key:
+        api_key = settings.groq_api_key
+        model = settings.groq_model or "qwen/qwen3.8-27b"
+        base_url = None
+    else:
+        api_key = settings.llm_api_key
+        model = settings.llm_model or DEFAULT_WORKING_MODEL
+        base_url = settings.llm_base_url or None
 
     # Auto-upgrade deprecated/expired model names
     if not model or model.strip() in DEPRECATED_MODELS:
-        model = DEFAULT_WORKING_MODEL
+        model = "qwen/qwen3.8-27b" if settings.groq_api_key else DEFAULT_WORKING_MODEL
 
     if not api_key and not base_url:
         return None, model
@@ -83,7 +89,7 @@ def _get_client_and_model() -> Tuple[Any, str]:
             _client = OpenAI(api_key=api_key or "ollama", base_url=base_url, timeout=18.0)
         else:
             from groq import Groq
-            _client = Groq(api_key=api_key)
+            _client = Groq(api_key=api_key, timeout=12.0)
         _client_config = current_config
 
     return _client, model

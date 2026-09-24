@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     groq_api_key: str = ""
-    groq_model: str = "llama-3.1-8b-instant"
+    groq_model: str = "qwen/qwen3.8-27b"
 
     # Optional provider overrides (e.g. OpenRouter, DashScope Qwen, Ollama, OpenAI)
     llm_api_key: str = ""
