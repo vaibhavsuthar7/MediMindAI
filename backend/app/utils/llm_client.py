@@ -65,9 +65,11 @@ def _get_client_and_model() -> Tuple[Any, str]:
     """Get initialized OpenAI or Groq client and active model name."""
     global _client, _client_config
 
-    # Prioritize blazing-fast Groq LPU if groq_api_key is set
-    if settings.groq_api_key:
-        api_key = settings.groq_api_key
+    # Prioritize blazing-fast Groq LPU (1s responses)
+    groq_key = settings.groq_api_key or os.getenv("GROQ_API_KEY", "")
+
+    if groq_key:
+        api_key = groq_key
         model = settings.groq_model or "qwen/qwen3.8-27b"
         base_url = None
     else:
@@ -77,7 +79,7 @@ def _get_client_and_model() -> Tuple[Any, str]:
 
     # Auto-upgrade deprecated/expired model names
     if not model or model.strip() in DEPRECATED_MODELS:
-        model = "qwen/qwen3.8-27b" if settings.groq_api_key else DEFAULT_WORKING_MODEL
+        model = "qwen/qwen3.8-27b" if groq_key else DEFAULT_WORKING_MODEL
 
     if not api_key and not base_url:
         return None, model
@@ -86,10 +88,10 @@ def _get_client_and_model() -> Tuple[Any, str]:
     if _client is None or _client_config != current_config:
         if base_url:
             from openai import OpenAI
-            _client = OpenAI(api_key=api_key or "ollama", base_url=base_url, timeout=18.0)
+            _client = OpenAI(api_key=api_key or "ollama", base_url=base_url, timeout=15.0)
         else:
             from groq import Groq
-            _client = Groq(api_key=api_key, timeout=12.0)
+            _client = Groq(api_key=api_key, timeout=10.0)
         _client_config = current_config
 
     return _client, model
@@ -129,8 +131,8 @@ def chat_completion(system_prompt: str, user_prompt: str, json_mode: bool = Fals
                     {"role": "system", "content": enriched_system_prompt},
                     {"role": "user", "content": user_prompt},
                 ],
-                temperature=0.2,
-                max_tokens=1024,
+                temperature=0.1,
+                max_tokens=350,
             )
             content = completion.choices[0].message.content
             if content and content.strip():
