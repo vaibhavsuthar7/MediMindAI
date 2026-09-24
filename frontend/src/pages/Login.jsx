@@ -59,6 +59,7 @@ export default function Login() {
     setSuccessMsg('')
     try {
       await loginWithGoogle()
+      navigate('/')
     } catch (err) {
       setError(err?.message || 'Google Login failed.')
     }

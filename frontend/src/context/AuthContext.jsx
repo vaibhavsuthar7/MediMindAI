@@ -376,9 +376,55 @@ function LocalAuthConsumer({ children }) {
         },
       })
       if (error) throw error
-    } else {
-      throw new Error('Google OAuth is not configured yet. Please configure Supabase or Clerk Google Provider.')
+      return
     }
+
+    const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '526222261599-2qijpduo1o3m7kteguf0hd94kpp2icqj.apps.googleusercontent.com'
+
+    return new Promise((resolve, reject) => {
+      if (!window.google?.accounts?.oauth2) {
+        return reject(new Error('Google Sign-In service is loading. Please try again in a moment.'))
+      }
+
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'email profile openid',
+        callback: async (tokenResponse) => {
+          if (tokenResponse?.error) {
+            return reject(new Error(tokenResponse.error_description || tokenResponse.error || 'Google Login cancelled.'))
+          }
+          try {
+            const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+            })
+            const profile = await res.json()
+            if (!profile?.email) {
+              throw new Error('Could not retrieve email from your Google account.')
+            }
+
+            const backendRes = await api.post('/auth/google', {
+              email: profile.email,
+              name: profile.name || profile.email.split('@')[0],
+              google_id: profile.sub,
+            })
+
+            const { access_token, user: loggedUser } = backendRes.data
+            localStorage.setItem('medimind_token', access_token)
+            localStorage.setItem('medimind_user', JSON.stringify(loggedUser))
+            api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+            setUser(loggedUser)
+            resolve(loggedUser)
+          } catch (err) {
+            reject(new Error(err?.response?.data?.detail || err?.message || 'Google authentication failed.'))
+          }
+        },
+        error_callback: (err) => {
+          reject(new Error(err?.message || 'Google login popup closed or blocked.'))
+        },
+      })
+
+      client.requestAccessToken({ prompt: 'select_account' })
+    })
   }, [])
 
   const requestPasswordReset = useCallback(async (email) => {

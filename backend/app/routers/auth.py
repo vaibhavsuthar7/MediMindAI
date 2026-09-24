@@ -278,6 +278,27 @@ def check_email(email: str, db: Session = Depends(get_db)):
     return {"exists": existing is not None, "valid_domain": True}
 
 
+@router.post("/google", response_model=schemas.Token)
+def google_login(payload: schemas.GoogleAuthRequest, db: Session = Depends(get_db)):
+    clean_email = payload.email.strip().lower()
+    user = db.query(models.User).filter(func.lower(models.User.email) == clean_email).first()
+    if not user:
+        user_name = payload.name.strip() if payload.name and payload.name.strip() else clean_email.split("@")[0]
+        user = models.User(
+            name=user_name[:30],
+            email=clean_email,
+            hashed_password=auth.hash_password("google_oauth_auth_user"),
+            age=None,
+            sex=None,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    token = auth.create_access_token({"sub": str(user.id), "email": user.email, "name": user.name})
+    return schemas.Token(access_token=token, user=schemas.UserOut.model_validate(user))
+
+
 @router.get("/me", response_model=schemas.UserOut)
 def me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user

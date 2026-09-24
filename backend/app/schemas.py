@@ -113,6 +113,12 @@ class Token(BaseModel):
     user: UserOut
 
 
+class GoogleAuthRequest(BaseModel):
+    email: EmailStr
+    name: Optional[str] = None
+    google_id: Optional[str] = None
+
+
 class SymptomRequest(BaseModel):
     symptoms_text: str
     previous_answers: Optional[Dict[str, str]] = None  # answers to prior follow-up questions
