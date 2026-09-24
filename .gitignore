@@ -37,3 +37,6 @@ Thumbs.db
 *.swp
 *.swo
 
+# Large archive backups
+*.zip
+

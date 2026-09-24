@@ -1,0 +1,394 @@
+[0] SRS Report on
+[1] ApniSociety App (Society Management System)
+[2] Internal Guide:Student Name :
+[3] Prof. Venus Patel                                                                                              [24172012012] Mohammad Dhukka
+[4] [24172012082] Vedant Shukla
+[5] [23012011118] Vaibhav Suthar
+[6] B.Tech. Semester VI
+[7] (Computer Engineering / Information Technology) July-December 2025
+[8] Submitted to,
+[9] Department of Computer Engineering / Institute of Technology.
+[10] U.V. Patel College of Engineering,
+[11] Ganpat University, Ganpat Vidyanagar, Mehsana - 384012.
+[12] 22/11/2025
+[13] C E R T I F I C A T E
+[14] TO WHOMSOEVER IT MAY CONCERN
+[15] This is to certify that Mr. Dhukka Mohammad (24172012012) student of B.Tech. Semester VI (Computer Engineering) has completed his full semester Capstone Project-I titled “ApniSociety App (Smart Society Manager)” ” satisfactorily in partial fulfillment of the requirement of Bachelor of Technology degree of Computer Engineering at Ganpat University, Ganpat Vidyanagar, Mehsana in the year 2025-2026.
+[16] Project Guide
+[17] SignDr. Paresh M. Solanki
+[18] Prof. Venus PatelHead, Computer Engineering
+[19] 22/11/2025
+[20] C E R T I F I C A T E
+[21] TO WHOMSOEVER IT MAY CONCERN
+[22] This is to certify that Mr. Shukla Vedant (24172012082) student of B.Tech. Semester VI (Computer Engineering) has completed his full semester Capstone Project-I titled “ApniSociety App (Smart Society Manager)” ” satisfactorily in partial fulfillment of the requirement of Bachelor of Technology degree of Computer Engineering at Ganpat University, Ganpat Vidyanagar, Mehsana in the year 2025-2026.
+[23] Project Guide
+[24] SignDr. Paresh M. Solanki
+[25] Prof. Venus PatelHead, Computer Engineering
+[26] 22/11/2025
+[27] C E R T I F I C A T E
+[28] TO WHOMSOEVER IT MAY CONCERN
+[29] This is to certify that Mr. Rishi Dhobi (24172012011) student of B.Tech. Semester VI (Computer Engineering) has completed his full semester Capstone Project-I titled “ApniSociety App (Smart Society Manager)” ” satisfactorily in partial fulfillment of the requirement of Bachelor of Technology degree of Computer Engineering at Ganpat University, Ganpat Vidyanagar, Mehsana in the year 2025-2026.
+[30] Project Guide
+[31] SignDr. Paresh M. Solanki
+[32] Prof. Venus PatelHead, Computer Engineering
+[33] SRS Report on
+[34] Health Insights Assistant ( HIA )
+[35] Internal Guide:Student Name :
+[36] Prof. Venus Patel                                                                               [24172012012] Mohammad Dhukka
+[37] [24172012011] Rishi Dhobi
+[38] [24172012082] Vedant Shukla
+[39] [23012011118] Vaibhav Suthar
+[40] B.Tech. Semester VI
+[41] (Computer Engineering / Information Technology) July-December 2025
+[42] Submitted to,
+[43] Department of Computer Engineering / Institute of Technology.
+[44] U.V. Patel College of Engineering,
+[45] Ganpat University, Ganpat Vidyanagar, Mehsana - 384012.
+[46] U. V. PATEL COLLEGE
+[47] OF
+[48] ENGINEERING
+[49] 22/11/2025
+[50] C E R T I F I C A T E
+[51] TO WHOMSOEVER IT MAY CONCERN
+[52] This is to certify that Mr. Vaibhav Suthar (23012011118) student of B.Tech. Semester V (Computer Engineering) has completed his full semester Capstone Project-I titled “ApniSociety App (Smart Society Manager)” ” satisfactorily in partial fulfillment of the requirement of Bachelor of Technology degree of Computer Engineering at Ganpat University, Ganpat Vidyanagar, Mehsana in the year 2025-2026.
+[53] Project Guide
+[54] SignDr. Paresh M. Solanki
+[55] Prof. Venus PatelHead, Computer Engineering
+[56] ABSTRACT
+[57] "Digitalizing Residential Communities for Transparency and Efficiency"
+[58] Traditional society management carries the burden of manual record-keeping, lack of transparency in financial dealings, and communication gaps between the administration and residents. This project proposes a comprehensive ApniSociety App (Smart Society Manager)” —a mobile application designed to streamline administrative tasks and improve the living experience of society members.
+[59] The system features a role-based access control where administrators can manage finances, including monthly maintenance tracking and automated event-cost splitting. For residents, it offers a digital Report Area to log household or common area complaints directly to the admin.
+[60] A standout feature of this application is the Smart Parking Module. It includes a vehicle directory for instant owner identification via number plates and a unique Parking Slot Sharing system. This allows residents to temporarily share their vacant parking slots with others when away, optimizing limited space. By integrating features like automated notifications and secure society joining via unique codes, this system aims to replace outdated manual registers with a transparent, real-time digital solution.
+[61] .
+[62] ACKNOWLEDGEMENT
+[63] I feel immense pleasure and profound gratitude in presenting the project report on  “ ApniSociety App (Smart Society Manager)” as a part of the curriculum for B.Tech Semester VI, Computer Engineering.
+[64] First and foremost, I would like to express my sincere thanks to Prof. Venus Patel , for providing invaluable guidance, constructive suggestions, and constant encouragement throughout the duration of the project. Their insights and support have been crucial in shaping this work to a successful outcome.
+[65] I would also like to extend my heartfelt appreciation to [Faculty Name], Lab Faculty, for their technical advice, time, and assistance during the laboratory sessions. Their input has enhanced the technical accuracy and quality of this report.
+[66] I would like to thank you to Head of Department Dr. Paresh M. Solanki, Computer Engineering Department, for providing an opportunity to work on a project that integrates practical knowledge with academic learning. The facilities, resources, and learning environment at U.V. Patel College of Engineering have been instrumental in completing this project.
+[67] I am grateful to all the faculty members and technical staff of the department for their encouragement and support during various stages of the project. Their valuable teachings and words of encouragement have always motivated me to perform better. Furthermore, I sincerely appreciate my parents and family members for their unwavering moral support and continuous encouragement, without which this project would not have been possible.
+[68] Lastly, I extend my gratitude to my friends and batchmates for their cooperative attitude, teamwork, and knowledge sharing, which have made the project journey memorable and successful.
+[69] With Sincere Regards from,
+[70] Mr. Mohammad Dhukka
+[71] Mr. Rishi Dhobi
+[72] Mr. Vedant Shukla
+[73] Mr. Vibhav Suthar
+[74] CHAPTER 1: INTRODUCTION1
+[75] Problem Statement…………………………………………………………………………..……1
+[76] Objective…………………………………………………………………………………..……...2
+[77] Purpose…………………………………………………………………………………..………..3
+[78] CHAPTER 2: PROJECT SCOPE4
+[79] CHAPTER 3: SOFTWARE AND HARDWARE REQUIREMENTS5
+[80] Software Requirements5
+[81] Hardware Requirements5
+[82] CHAPTER 4: FUNCTION AND NON-FUNCTIONAL REQUIREMENTS6
+[83] Functional Requirements6
+[84] Admin Requirements7
+[85] Non-functional Requirements8
+[86] CHAPTER 5: PROCESS MODEL9
+[87] Incremental Model9
+[88] Planning Stage10
+[89] Analysis Stage11
+[90] Design Stage12
+[91] Development Stage13
+[92] Testing Stage14
+[93] Deployment Stage15
+[94] Maintenance Stage16
+[95] CHAPTER 6: PROJECT PLANNING17
+[96] Project Planning17
+[97] CHAPTER 7: SYSTEM DESIGN18
+[98] UML Approach18
+[99] Use Case Diagram18
+[100] Sequence Diagram19
+[101] Activity Diagram20
+[102] Class Diagram21
+[103] State Chart Diagram22
+[104] Data flow Diagram23
+[105] : E-R diagram24
+[106] CHAPTER 8 : CONCLUSION AND FUTURE WORK28
+[107] Conclusion28
+[108] Future Work28
+[109] .8.3Annexure28
+[110] Reference28
+[111] AboutCollege……………………………………..…………………………………………..….29
+[112] List of FiguresList of Figures
+[113] List of Figures
+[114] List of Figures
+[115] Figure 7.1.1: use case diagram18
+[116] Figure 7.1.2: sequence diagram19
+[117] Figure 7.1.3: activity diagram20
+[118] Figure 7.1.4: state diagram21
+[119] Figure 7.1.5: class diagram22
+[120] Figure 7.1.6.1: 0-level DFD23
+[121] Figure 7.1.6.2 : 1-level DFD23
+[122] Figure 7.1.6.3 : 2-level DFD23
+[123] Figure 7.1.7: E-R diagram24
+[124] CHAPTER 1: INTRODUCTION
+[125] Problem Statement
+[126] In residential societies, managing daily operations through handwritten registers and manual records has become increasingly inefficient and error-prone. Monthly maintenance charges are often recorded inconsistently, leading to payment disputes and delayed collections. Event expenses get divided arbitrarily among members, causing confusion and unfair burden distribution. House maintenance complaints either go unnoticed or take weeks to resolve due to poor tracking. Society announcements rely on physical notices that members frequently miss. Parking management creates daily conflicts—stray vehicles block spaces, absent owners' slots remain unused, and there's no quick way to identify vehicle owners through number plates.
+[127] The absence of a centralized digital system forces society secretaries and admins to spend hours reconciling records, chasing payments, and resolving petty disputes. Members face inconvenience reporting issues, tracking dues, or accessing important updates. Temporary parking allocation for outstation members remains manual and disorganized. This fragmented approach not only wastes time but also breeds resentment among residents, undermining community harmony.
+[128] The Smart Society Manager addresses these pain points by providing a unified digital platform where maintenance tracking happens automatically, event costs divide fairly, complaints get resolved systematically, announcements reach everyone instantly, and parking operates efficiently with vehicle lookup and temporary slot allocation. This solution eliminates paperwork, ensures transparency, and saves hours of manual work for society admins while empowering members with real-time access to all society information.
+[129] Objective
+[130] The primary objectives of developing the Smart Society Manager (SSM) are:
+[131] To digitize maintenance management by automating monthly charge tracking, payment status updates, and reminders, eliminating errors from handwritten ledgers and ensuring timely collections for society admins.
+[132] To streamline event expense handling through automatic cost division among participating members, transparent contribution tracking, and digital receipts—making event organization fair and hassle-free.
+[133] To enable efficient complaint resolution via a dedicated report portal where house owners can submit issues with photos/descriptions, allowing admins to assign, track, and close complaints systematically.
+[134] To improve communication with an instant notification panel for admin announcements about meetings, maintenance schedules, or emergencies, ensuring 100% member reach without relying on physical notices.
+[135] To solve parking conflicts by maintaining a vehicle registry (number plate → owner details), enabling quick stray vehicle identification, and supporting temporary slot allocation for absent owners based on their travel duration.
+[136] To provide multi-society support where users can create new societies with unique join codes requiring admin approval, allowing the app to scale across multiple residential communities securely.
+[137] Purpose
+[138] The purpose of developing the Smart Society Manager(SSM) is to create a simple yet powerful digital solution that replaces outdated handwritten registers and manual processes in residential societies. This web/mobile application centralizes all key operations—maintenance billing, event expense sharing, house complaint tracking, admin notifications, and parking management—into one user-friendly platform accessible to both society admins and members.
+[139] By automating monthly maintenance updates with payment reminders, fairly dividing event costs among participants, providing a structured complaint system with photo uploads, enabling instant announcements that reach every member, and introducing smart parking features like vehicle lookup by number plate and temporary slot allocation, SMS eliminates common pain points that cause disputes and wasted time.
+[140] Ultimately, this project delivers a secure, scalable system supporting multiple societies through unique join codes and admin approvals, saving administrators hours of paperwork weekly while empowering residents with real-time transparency and control over their society affairs—transforming chaotic management into organized, harmonious community living.
+[141] .
+[142] CHAPTER 2: PROJECT SCOPE
+[143] The Smart Society Manager(SSM) project focuses on developing a web/mobile application that digitizes core residential society operations for up to 100 members per society, supporting multiple societies through secure user management. This includes automated monthly maintenance charge tracking with payment status and reminders, event expense posting with automatic per-member cost division and contribution tracking, a complaint portal for house owners to report issues (with photo/text uploads and admin assignment/status updates), an admin notification panel for instant announcements about meetings or emergencies, and a parking module for vehicle registration (number plate to owner mobile/name lookup), stray vehicle detection, and temporary slot allocation based on owner absence duration.
+[144] Inclusions:
+[145] User roles: Super Admin (create societies), Society Admin (approve members, manage all features), Members (join via code, view/pay dues, report issues, register vehicles).
+[146] Multi-society support with unique join codes requiring admin approval.
+[147] Basic dashboard showing dues, upcoming events, personal complaints, and vehicle status.
+[148] Simple reports/export for maintenance and event expenses (CSV/PDF).
+[149] Responsive UI for mobile/desktop access.
+[150] Exclusions (Out of Scope):
+[151] Actual payment gateway integration (only tracks payment status).
+[152] Advanced accounting/audit trails or GST compliance.
+[153] Hardware integration (CCTV for parking, physical access control).
+[154] Complex visitor management or service vendor portals.
+[155] iOS/Android native apps (web-first, PWA compatible).
+[156] CHAPTER 3: SOFTWARE AND HARDWARE REQUIREMENTS
+[157] Software Requirements
+[158] Operating Systems:
+[159] Development: Windows 11 / Ubuntu 22.04.
+[160] Mobile: Android WebView (PWA app approach).
+[161] Development Environment:
+[162] Python 3.11+.
+[163] Streamlit 1.35+ (pip install streamlit).
+[164] VS Code (free IDE).
+[165] GitHub Desktop for version control.
+[166] Frontend & App:
+[167] Streamlit for web dashboard.
+[168] Bootstrap 5 + HTML/CSS/JS (responsive for mobile).
+[169] Progressive Web App (PWA) for offline access/install as app.
+[170] Backend & Database:
+[171] Supabase (free PostgreSQL + auth + realtime notifications).
+[172] Libraries: streamlit-supabase, pandas (reports), qrcode (society join codes).
+[173] 3.3.2 Hardware Requirements
+[174] As a student developer building this Society Management System app, I've kept requirements practical for my college laptop, basic Android phones (most society members use), and free cloud hosting.
+[175] Developer Machine (My Laptop for Coding/Testing):
+[176] Processor: Intel Core i3/i5 or AMD Ryzen 3 (2.5 GHz+).
+[177] RAM: 8 GB (handles Streamlit + browser tabs).
+[178] Storage: 256 GB SSD/HDD.
+[179] Display: 1366x768 resolution.
+[180] Internet: 5 Mbps+ WiFi for Supabase sync.​
+[181] End-User Mobile Devices (Society Members/Admins):
+[182] Android: Version 9.0+ (Pie), 2 GB RAM min (budget phones like Redmi).
+[183] iOS: 13+ (iPhone 7+, optional).
+[184] Screen: 5-inch+ for easy form filling/parking lookup.
+[185] Server (Free Cloud Deployment):
+[186] 1 vCPU, 2 GB RAM, 10 GB storage (Railway/Render free tier).
+[187] CHAPTER 4: SYSTEM REQUIREMENTS
+[188] Functional Requirements
+[189] FR-01: User Registration
+[190] Member enters name, phone, email, password to create account.
+[191] System generates unique user ID and sends verification OTP to phone/email.​
+[192] FR-02: Create New Society
+[193] Admin (first user) enters society name, address, total flats.
+[194] System auto-generates 6-digit unique join code valid for 30 days.
+[195] Admin gets dashboard access immediately.
+[196] FR-03: Join Society
+[197] Member enters society join code.
+[198] System sends approval request to admin.
+[199] Admin approves/rejects with one click; member gets instant notification.
+[200] 4.1.2 Maintenance Management
+[201] FR-04: Monthly Maintenance Update
+[202] Admin enters monthly charge per flat (e.g., ₹2000) and due date.
+[203] System auto-calculates each member's amount and marks "Pending".
+[204] Auto-sends payment reminder 3 days before due date.
+[205] FR-05: Payment Status Tracking
+[206] Member views "My Dues" showing current/previous months, total pending.
+[207] Admin sees society-wide collection dashboard (paid/pending %).
+[208] Member marks "Paid" after payment (manual toggle for now).
+[209] 4.1.3 Event Management
+[210] FR-06: Create Event
+[211] Admin enters event name, date, total cost, attending members.
+[212] System auto-divides cost equally (e.g., ₹5000/50 members = ₹100 each).
+[213] Members see "My Events" with their share highlighted.
+[214] FR-07: Event Payment Tracking
+[215] Member marks their event share as "Paid".
+[216] Admin dashboard shows per-event collection status.
+[217] 4.1.4 Complaint/Report System
+[218] FR-08: Submit House Complaint
+[219] Member selects issue type (Water, Electricity, Lift, etc.), adds photo/description.
+[220] System creates ticket with priority (High/Medium/Low) and assigns to admin.
+[221] Real-time status: Open → Assigned → Resolved.
+[222] 4.1.5 Notification System
+[223] FR-09: Admin Announcements
+[224] Admin types message (meeting, emergency, etc.) and selects "All Members".
+[225] Instant push notification + in-app bell icon for unread alerts.
+[226] Members mark as "Read".
+[227] 4.1.6 Parking Management
+[228] FR-10: Vehicle Registration
+[229] Member adds vehicle: number plate, type (2W/4W), owner name, phone.
+[230] Admin approves vehicle entry to society parking list.
+[231] FR-11: Stray Vehicle Lookup
+[232] Any member enters stray number plate → instant owner name/phone display.
+[233] "Call Owner" button with direct dial option.
+[234] FR-12: Temporary Slot Allocation
+[235] Absent member marks "Out of Station" with return date.
+[236] System shows their slot as "Available for Temp Use".
+[237] Functional Requirements
+[238] 4.2.1 Performance Requirements
+[239] Response Time: Dashboard loads in under 2 seconds; parking lookup shows results in <1 second.
+[240] Concurrent Users: Supports 100 members per society accessing simultaneously without crashes.
+[241] Scalability: Handles 10 societies (1000+ total users) without performance drop.
+[242] 4.2.1 Security Requirements
+[243] Data Privacy: All personal data (phone, vehicle details) encrypted using HTTPS + Supabase Row Level Security.
+[244] Authentication: Passwords hashed; session timeout after 15 mins inactivity.
+[245] Access Control: Members see only their society data; admin sees everything.
+[246] 4.2.3 Usability Requirements
+[247] Mobile-First: Fully responsive design works on Android 9+ phones (90% Indian market).
+[248] Accessibility: Large buttons/text for elderly society members; English language toggle.
+[249] Onboarding: New members understand app in first 2 minutes via guided tour.
+[250] 4.2.4 Reliability Requirements
+[251] Uptime: 99% availability (Supabase free tier SLA).
+[252] Data Backup: Automatic daily backups; no data loss during server maintenance.
+[253] Offline Mode: View dues/notifications offline; sync when internet returns.
+[254] 4.2.5 Compatibility Requirements
+[255] Browsers: Chrome 90+, Firefox 85+, Safari 14+ (no Internet Explorer).
+[256] Devices: Android phones (2GB RAM+), basic laptops; PWA installable.
+[257] Screen Sizes: Works on 4-inch to 7-inch mobile screens perfectly.
+[258] 4.2.6 Maintainability Requirements
+[259] Code Quality: Modular Python/Streamlit code; clear comments for future semesters.
+[260] Database: Normalized Supabase tables; easy to add new societies/features.
+[261] Deployment: One-click deploy to Railway/Render; no server management.
+[262] 4.2.7 Capacity Requirements
+[263] Storage: 10 GB for 100 societies (photos + data); Supabase handles scaling.
+[264] Monthly SMS: 5000 notifications (meeting alerts, payment reminders).
+[265] Photos: 100 complaints/month with 2MB photo limit each.
+[266] use by individuals with disabilities.
+[267] CHAPTER 5: PROCESS MODEL
+[268] Incremental Model
+[269] The Incremental Model is chosen for the development of the Smart society manager(SSM). This model combines the structured approach of linear development with the flexibility of iterative enhancement by building the system in smaller, manageable increments. Each increment adds functional components to an evolving system.
+[270] The decision to adopt the Incremental Model is based on the modular nature of the project requirements: features such as User Authentication, Medical Report Upload & Analysis, Doctor Finder Integration, Session History, and Admin Management can be independently developed, tested, and improved in successive increments. This approach facilitates early delivery of usable functionality, inviting timely user feedback and enabling risk management.
+[271] The main stages of the Incremental Model applied for SSM include:
+[272] Requirement Analysis: Clear identification and documentation of functional and non-functional requirements for each increment, laying a solid foundation for development.
+[273] Design & Development: Detailed design and coding of individual modules or features within each increment, ensuring they align with overall system architecture.
+[274] Testing: Each increment undergoes comprehensive testing including unit testing, integration testing, and user acceptance testing to validate functionality and performance.
+[275] Implementation: Successful increments are integrated into the main system and deployed, providing users with incremental improvements and new features.
+[276] This model supports rapid delivery of critical features early in the project lifecycle and is flexible to evolving needs, fostering continuous improvement and user-centric development throughout the HIA system’s creation
+[277] Planning Stage
+[278] The Planning Stage set project foundation by defining core problem (handwritten society chaos) and MVP scope. I created Gantt chart showing 10-week timeline, identified risks (Supabase quota limits), and listed resources (my i3 laptop + free cloud). Stakeholder consultations confirmed must-have features:maintenance+parking.
+[279] Analysis Stage
+[280] Converted user needs into structured requirements. Created ER diagrams for Society → Member → Vehicle relationships. Defined functional specs (FR-01 to FR-12) and prioritized maintenance/parking as high-value. Produced SRS draft serving as blueprint for development.
+[281] Design Stage
+[282] Designed modular Streamlit pages: login → society dashboard → feature modules. Created database schema in Supabase (tables: users, societies, maintenance, vehicles). UI wireframes ensure mobile-first design for society aunties using budget phones.
+[283] Development Stage
+[284] Increment 1: Basic auth + society join (live demo Week 2).Increment 2: Maintenance CRUD with auto-reminders.Increment 3: Parking lookup (number plate → owner phone).Each increment delivers testable feature + admin/member views.
+[285] Testing Stage
+[286] Unit tests for each module (pytest). Integration testing for society join → maintenance flow. User acceptance testing with roommate acting as "society admin". Mobile testing on Android 9 phone.
+[287] Deployment Stage
+[288] Unit tests for each module (pytest). Integration testing for society join → maintenance flow. User acceptance testing with roommate acting as "society admin". Mobile testing on Android 9 phone.
+[289] Maintenance Stage
+[290] CHAPTER 6: PROJECT PLANNING
+[291] Project Planning
+[292] Task ID
+[293] Activity
+[294] Duration
+[295] Week 1-2
+[296] Week 3-4
+[297] Week 5-6
+[298] Week 7-8
+[299] Week 9-10
+[300] T1
+[301] Requirements & Planning
+[302] 1 week
+[303] ████████
+[304] T2
+[305] Increment 1: Auth + Society
+[306] 2 weeks
+[307] ████████
+[308] ████████
+[309] T3
+[310] Increment 2: Maintenance
+[311] 2 weeks
+[312] ████████
+[313] ████████
+[314] T4
+[315] Increment 3: Events + Notice
+[316] 2 weeks
+[317] ████████
+[318] ████████
+[319] T5
+[320] Increment 4: Complaints
+[321] 1.5 weeks
+[322] ██████
+[323] T6
+[324] Increment 5: Parking (USP)
+[325] 1.5 weeks
+[326] ██████
+[327] ███
+[328] T7
+[329] Testing & Bug Fixes
+[330] 1 week
+[331] ████████
+[332] T8
+[333] Documentation (SRS/PPT)
+[334] Parallel
+[335] ▓▓▓▓▓▓▓▓
+[336] ▓▓▓▓▓▓▓▓
+[337] ▓▓▓▓▓▓▓▓
+[338] ▓▓▓▓▓▓▓▓
+[339] ▓▓▓▓▓▓▓▓
+[340] T9
+[341] Demo Preparation
+[342] 0.5 week
+[343] ██
+[344] Risk Management
+[345] CHAPTER 7: SYSTEM DESIGN
+[346] UML Approach
+[347] A UML diagram is the graphical presentation of a set of elements, most often rendered as a connected graph of vertices and arcs. You draw a diagram to visualize a system from a different perspective, so a diagram is a projection into a system. For all but most trivial systems, a diagram represents an elided view of the elements that make up a system. The same element may appear in all diagrams, only a few diagrams, or in no diagrams at all.
+[348] In theory, a diagram may contain any combination of things and relationships. In practice, however, a small number of common combinations arise, which are consistent with the five most useful views that comprise the architecture of a software-intensive system. For this reason, the UML includes nine such diagrams:
+[349] Use Case Diagram
+[350] [Figure 7.1.1: use case diagram]
+[351] Sequence Diagram
+[352] [Figure 7.1.2: sequence diagram]
+[353] Activity Diagram
+[354] [Figure 7.1.3: Activity diagram]
+[355] Class Diagram
+[356] [Figure 7.1.4: Class diagram]
+[357] State Chart Diagram
+[358] [Figure 7.1.5: State chart diagram]
+[359] Data flow Diagram
+[360] [Figure 7.1.6.1: level- 0 diagram]
+[361] [Figure 7.1.6.2: level- 1 diagram]
+[362] [Figure 7.1.6.3: level- 2 diagram]
+[363] : E-R diagram
+[364] [Figure 7.1.7: E-R diagram]
+[365] Screenshot of Registration page
+[366] Login page
+[367] Home page
+[368] CHAPTER 8: CONCLUSION AND FUTURE WORK
+[369] Conclusion
+[370] The Health Insights Assistant (HIA) system represents a significant advancement in AI-driven healthcare, delivering personalized health insights and actionable recommendations through a secure, user- friendly platform. By leveraging a multi-model cascade architecture and in-context learning, HIA ensures that each medical report is analyzed with precision, while continuously improving its knowledge base for more accurate and tailored feedback over time. With robust privacy safeguards, seamless session management, and integrated doctor discovery, HIA empowers users to understand and act on their health data more effectively, setting a benchmark for intelligent agent-based healthcare solutions.
+[371] Future Work
+[372] Looking ahead, the HIA platform can be enhanced by integrating additional health data sources such as wearable devices, real-time vitals, and broader EHR interoperability to provide more holistic
+[373] analysis. Future iterations may employ advanced natural language processing for broader multilingual support, conversational AI for richer patient engagement, and predictive analytics for early disease risk
+[374] flagging. Research into federated learning and privacy-preserving AI will further protect user data, while building a more robust, continuously learning system that adapts to evolving medical guidelines and
+[375] individual user needs. The ongoing goal is to transform HIA into a proactive partner in healthcare
+[376] management, supporting preventive care, disease monitoring, and a highly personalized patient journey
+[377] Annexure
+[378] The Health Insights Assistant (HIA) project demonstrates notable advancements in AI-driven
+[379] healthcare by delivering secure, personalized health insights and actionable recommendations. The system’s modular and privacy-focused design ensures accurate feedback and empowers users to make informed health decisions. Moving forward, enhancements such as integration of wearable data, advanced natural language
+[380] processing, and privacy-preserving AI can further strengthen the platform, making it a comprehensive partner for holistic healthcare management and proactive patient engagement.
+[381] References
+[382] https://www.kaggle.com/datasets/prasad22/healthcare-dataset
+[383] https://chatling.ai/
+[384] 8.5 About College:-
+[385] Our spirituous efforts are directed towards leading our student community to such an acme of technical excellence that can satisfy the requisition of the industry, the nation and the globe at large. The generation of an entirely different community of students alming at attaining technical expertise and utilizing the technical know-how in the service of mankind is at the root of our efforts. We have the following aims before us.
+[386] • To offer guidance, motivation and inspiration for full growth of hidden traits
+[387] • To impart technical and need-based education by conducting elaborated training programs.
+[388] • To shape and mold the personality of future generation
+[389] • To construct fertile ground for resting dire challenges
+[390] • To cultivate the feeling of belongingness amongst the faction of engineers
+[391] Establishment:
+[392] Ganpat University Institute of Technology (GNUIOT) situated in Ganpat Vidyanagar campus was established in september-2014 under the aegis of Mehsana District Education Foundation with a view of educating and training young talented students of Gujarat at the field of engineering and technology to meet the needs of industries in Gujarat and beyond for the growth of the industries.
+[393] The College is named after GNUIOT, a leading industrialist of Gujarat, for his generous support. It is a self-financed institute approved by UNIVERSITY GRANTS COMMISSION (UGC), New Delhi, the Government of Gujarat and now it became the constituent college of Ganpat University.

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: medimind_backend
+    restart: always
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=sqlite:///./medimind.db
+      - ALLOW_ALL_CORS=true
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_data:/app/uploads
+      - chroma_data:/app/chroma_store
+      - sqlite_data:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: medimind_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  backend_data:
+  chroma_data:
+  sqlite_data:

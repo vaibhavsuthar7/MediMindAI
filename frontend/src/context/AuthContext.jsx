@@ -177,14 +177,55 @@ function SupabaseAuthConsumer({ children }) {
     }
   }, [])
 
+  const loginWithGoogle = useCallback(async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      },
+    })
+    if (error) throw error
+    return data
+  }, [])
+
+  const requestPasswordReset = useCallback(async (email) => {
+    const cleanEmail = email?.trim().toLowerCase() || ''
+    if (!cleanEmail.endsWith('@gmail.com')) {
+      throw new Error('email id is incorrect')
+    }
+    try {
+      const res = await api.post('/auth/forgot-password', { email: cleanEmail })
+      const otpCode = res.data?.otp_code || null
+      if (otpCode) setLatestOtp(otpCode)
+      return { status: 'otp_sent', otp_code: otpCode }
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.message || 'Failed to send password reset OTP.'
+      throw new Error(msg)
+    }
+  }, [])
+
+  const resetPassword = useCallback(async (email, code, newPassword) => {
+    const cleanEmail = email?.trim().toLowerCase() || ''
+    try {
+      const res = await api.post('/auth/reset-password', { email: cleanEmail, code, new_password: newPassword })
+      return res.data
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.message || 'Failed to reset password.'
+      throw new Error(msg)
+    }
+  }, [])
+
   return (
     <AuthContext.Provider
       value={{
         user,
         login,
+        loginWithGoogle,
         signup,
         resendOtp,
         verifyOtp,
+        requestPasswordReset,
+        resetPassword,
         logout,
         latestOtp,
         isSupabaseActive: true,
@@ -253,8 +294,12 @@ function ClerkAuthConsumer({ children }) {
     setLocalUser(data.user)
   }, [])
 
+  const loginWithGoogle = useCallback(async () => {
+    // Clerk handles OAuth automatically via <SignIn /> button or custom strategy
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isSupabaseActive: false, isClerkActive: true, getToken, isLoaded }}>
+    <AuthContext.Provider value={{ user, login, loginWithGoogle, signup, logout, isSupabaseActive: false, isClerkActive: true, getToken, isLoaded }}>
       {children}
     </AuthContext.Provider>
   )
@@ -322,8 +367,49 @@ function LocalAuthConsumer({ children }) {
     setPendingAuth(null)
   }, [])
 
+  const loginWithGoogle = useCallback(async () => {
+    if (supabase) {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      })
+      if (error) throw error
+    } else {
+      throw new Error('Google OAuth is not configured yet. Please configure Supabase or Clerk Google Provider.')
+    }
+  }, [])
+
+  const requestPasswordReset = useCallback(async (email) => {
+    const cleanEmail = email?.trim().toLowerCase() || ''
+    if (!cleanEmail.endsWith('@gmail.com')) {
+      throw new Error('email id is incorrect')
+    }
+    try {
+      const res = await api.post('/auth/forgot-password', { email: cleanEmail })
+      const otpCode = res.data?.otp_code || null
+      if (otpCode) setLatestOtp(otpCode)
+      return { status: 'otp_sent', otp_code: otpCode }
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.message || 'Failed to send password reset OTP.'
+      throw new Error(msg)
+    }
+  }, [])
+
+  const resetPassword = useCallback(async (email, code, newPassword) => {
+    const cleanEmail = email?.trim().toLowerCase() || ''
+    try {
+      const res = await api.post('/auth/reset-password', { email: cleanEmail, code, new_password: newPassword })
+      return res.data
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.message || 'Failed to reset password.'
+      throw new Error(msg)
+    }
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, resendOtp, verifyOtp, logout, latestOtp, isSupabaseActive: false, isClerkActive: false, isLoaded: true }}>
+    <AuthContext.Provider value={{ user, login, loginWithGoogle, signup, resendOtp, verifyOtp, requestPasswordReset, resetPassword, logout, latestOtp, isSupabaseActive: false, isClerkActive: false, isLoaded: true }}>
       {children}
     </AuthContext.Provider>
   )
