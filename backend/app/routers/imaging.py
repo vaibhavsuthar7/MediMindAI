@@ -13,25 +13,39 @@ from app.agents.orchestrator import orchestrator
 router = APIRouter(prefix="/api/imaging", tags=["imaging"])
 
 
+MAX_IMAGE_FILE_SIZE = 25 * 1024 * 1024  # 25 MB
+
 @router.post("/analyze", response_model=schemas.ImagingResponse)
 async def analyze_xray(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
+    from fastapi import HTTPException, status
     ext = os.path.splitext(file.filename)[1].lower() or ".png"
     allowed_extensions = {".png", ".jpg", ".jpeg", ".webp", ".dcm"}
     if ext not in allowed_extensions:
-        from fastapi import HTTPException, status
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Unsupported file format. Only PNG, JPG, JPEG, WEBP, and DICOM images are allowed."
         )
 
+    contents = await file.read()
+    if len(contents) > MAX_IMAGE_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="File size exceeds limit. Maximum allowed scan file size is 25 MB."
+        )
+    if len(contents) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded file is empty."
+        )
+
     saved_name = f"{uuid.uuid4().hex}{ext}"
     saved_path = os.path.join(settings.upload_dir, saved_name)
     with open(saved_path, "wb") as f:
-        f.write(await file.read())
+        f.write(contents)
 
     result = orchestrator.imaging.run(saved_path)
 

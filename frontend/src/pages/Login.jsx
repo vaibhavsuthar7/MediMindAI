@@ -27,7 +27,6 @@ export default function Login() {
   const [forgotError, setForgotError] = useState('')
   const [forgotSuccess, setForgotSuccess] = useState('')
   const [forgotLoading, setForgotLoading] = useState(false)
-  const [demoOtpCode, setDemoOtpCode] = useState(null)
 
   // Field focus tracking for character mood state
   const [activeInput, setActiveInput] = useState(null) // 'email' | 'password' | null
@@ -457,19 +456,10 @@ export default function Login() {
                 <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
                   {/* OTP CODE FIELD */}
                   <div>
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="mb-1.5">
                       <label className="block text-xs font-bold theme-text-sub uppercase tracking-wider">
                         6-Digit OTP Code
                       </label>
-                      {demoOtpCode && (
-                        <button
-                          type="button"
-                          onClick={() => setForgotOtp(demoOtpCode)}
-                          className="text-[11px] font-bold text-[#E07A5F] hover:underline"
-                        >
-                          Auto-fill Code ({demoOtpCode})
-                        </button>
-                      )}
                     </div>
                     <input
                       type="text"

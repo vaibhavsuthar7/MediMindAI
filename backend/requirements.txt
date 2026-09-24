@@ -19,4 +19,7 @@ openai>=1.0.0
 # Real imaging inference (MediMind Imaging Agent — ResNet18 models)
 torch>=2.0.0
 torchvision>=0.15.0
+pydicom>=2.4.0
+scikit-learn>=1.3.0
+joblib>=1.3.0
  

@@ -53,10 +53,37 @@ def _init_models():
                 _region_classes[reg] = json.load(f)
             _region_models[reg] = load_model(mdl_path, len(_region_classes[reg]))
 
+def load_image_from_bytes(image_bytes: bytes) -> Image.Image:
+    # 1. Try standard PIL decode
+    try:
+        return Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    except Exception:
+        pass
+
+    # 2. Try DICOM decode via pydicom
+    try:
+        import pydicom
+        import numpy as np
+        ds = pydicom.dcmread(io.BytesIO(image_bytes), force=True)
+        if hasattr(ds, "pixel_array"):
+            arr = ds.pixel_array.astype(np.float32)
+            arr_min = arr.min()
+            arr_max = arr.max()
+            if arr_max > arr_min:
+                normalized = ((arr - arr_min) / (arr_max - arr_min) * 255.0).astype(np.uint8)
+            else:
+                normalized = arr.astype(np.uint8)
+            return Image.fromarray(normalized).convert("RGB")
+        else:
+            raise ValueError("DICOM file contains metadata but no pixel_array.")
+    except Exception as dcm_err:
+        raise ValueError(f"Failed to parse image/DICOM file: {dcm_err}")
+
+
 def predict(image_bytes: bytes) -> dict:
     _init_models()
 
-    img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    img = load_image_from_bytes(image_bytes)
     tensor = transform(img).unsqueeze(0).to(device)
 
     # Stage 1: Body Part Classifier

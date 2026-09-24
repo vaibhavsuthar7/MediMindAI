@@ -83,6 +83,8 @@ def send_email_otp(to_email: str, otp_code: str):
     thread.start()
 
 
+from sqlalchemy import func
+
 @router.post("/send-otp")
 def send_otp(payload: schemas.OTPRequest):
     email_clean = payload.email.strip().lower()
@@ -94,7 +96,7 @@ def send_otp(payload: schemas.OTPRequest):
         "expires_at": time.time() + OTP_VALIDITY_SECONDS
     }
     send_email_otp(email_clean, otp_code)
-    return {"message": f"6-digit OTP code sent to {email_clean}", "otp_code": otp_code}
+    return {"message": f"6-digit OTP code sent to {email_clean}"}
 
 
 @router.post("/verify-otp", response_model=schemas.Token)
@@ -103,24 +105,21 @@ def verify_otp_code(payload: schemas.OTPVerify, db: Session = Depends(get_db)):
     code_entered = payload.code.strip()
 
     record = OTP_STORE.get(email_clean)
-    bypass_codes = ["123456", "000000", "777777"]
 
     if not record:
-        if code_entered not in bypass_codes:
-            raise HTTPException(status_code=400, detail="No active OTP found. Please click Resend Code.")
+        raise HTTPException(status_code=400, detail="No active OTP found. Please click Resend Code.")
 
-    if record and time.time() > record["expires_at"]:
+    if time.time() > record["expires_at"]:
         OTP_STORE.pop(email_clean, None)
-        if code_entered not in bypass_codes:
-            raise HTTPException(status_code=400, detail="OTP code has expired. Please click Resend Code.")
+        raise HTTPException(status_code=400, detail="OTP code has expired. Please click Resend Code.")
 
-    if record and record["code"] != code_entered and code_entered not in bypass_codes:
+    if record["code"] != code_entered:
         raise HTTPException(status_code=400, detail="Invalid 6-digit OTP code. Please check and try again.")
 
     OTP_STORE.pop(email_clean, None)
 
     # Find or auto-create user in DB
-    user = db.query(models.User).filter(models.User.email == email_clean).first()
+    user = db.query(models.User).filter(func.lower(models.User.email) == email_clean).first()
     if not user:
         user = models.User(
             name=email_clean.split("@")[0],
@@ -143,7 +142,7 @@ def forgot_password(payload: schemas.OTPRequest, db: Session = Depends(get_db)):
     if not email_clean.endswith("@gmail.com"):
         raise HTTPException(status_code=400, detail="email id is incorrect")
 
-    user = db.query(models.User).filter(models.User.email == email_clean).first()
+    user = db.query(models.User).filter(func.lower(models.User.email) == email_clean).first()
     if not user:
         raise HTTPException(status_code=404, detail="No account found with this email address. Please check your email or Sign Up.")
 
@@ -153,35 +152,42 @@ def forgot_password(payload: schemas.OTPRequest, db: Session = Depends(get_db)):
         "expires_at": time.time() + OTP_VALIDITY_SECONDS
     }
     send_email_otp(email_clean, otp_code)
-    return {"message": f"Password reset OTP code sent to {email_clean}", "otp_code": otp_code}
+    return {"message": f"Password reset OTP code sent to {email_clean}"}
 
 
 @router.post("/reset-password")
 def reset_password(payload: schemas.PasswordResetRequest, db: Session = Depends(get_db)):
+    import re
     email_clean = payload.email.strip().lower()
     code_entered = payload.code.strip()
     new_password = payload.new_password
 
+    # Comprehensive strong password validation
     if len(new_password) < 8:
         raise HTTPException(status_code=400, detail="New password must be at least 8 characters long.")
+    if not re.search(r"[A-Z]", new_password):
+        raise HTTPException(status_code=400, detail="New password must contain at least 1 uppercase letter.")
+    if not re.search(r"[a-z]", new_password):
+        raise HTTPException(status_code=400, detail="New password must contain at least 1 lowercase letter.")
+    if not re.search(r"[0-9]", new_password):
+        raise HTTPException(status_code=400, detail="New password must contain at least 1 number.")
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", new_password):
+        raise HTTPException(status_code=400, detail="New password must contain at least 1 special character (!@#$%^&*).")
 
-    user = db.query(models.User).filter(models.User.email == email_clean).first()
+    user = db.query(models.User).filter(func.lower(models.User.email) == email_clean).first()
     if not user:
         raise HTTPException(status_code=404, detail="User account not found.")
 
     record = OTP_STORE.get(email_clean)
-    bypass_codes = ["123456", "000000", "777777"]
 
     if not record:
-        if code_entered not in bypass_codes:
-            raise HTTPException(status_code=400, detail="No active reset request found. Please request a new OTP code.")
+        raise HTTPException(status_code=400, detail="No active reset request found. Please request a new OTP code.")
 
-    if record and time.time() > record["expires_at"]:
+    if time.time() > record["expires_at"]:
         OTP_STORE.pop(email_clean, None)
-        if code_entered not in bypass_codes:
-            raise HTTPException(status_code=400, detail="OTP code has expired. Please request a new code.")
+        raise HTTPException(status_code=400, detail="OTP code has expired. Please request a new code.")
 
-    if record and record["code"] != code_entered and code_entered not in bypass_codes:
+    if record["code"] != code_entered:
         raise HTTPException(status_code=400, detail="Invalid 6-digit OTP code. Please check and try again.")
 
     OTP_STORE.pop(email_clean, None)
@@ -198,7 +204,7 @@ def signup(payload: schemas.UserCreate, db: Session = Depends(get_db)):
     if not clean_email.endswith("@gmail.com"):
         raise HTTPException(status_code=400, detail="email id is incorrect")
 
-    existing = db.query(models.User).filter(models.User.email == clean_email).first()
+    existing = db.query(models.User).filter(func.lower(models.User.email) == clean_email).first()
     if existing:
         raise HTTPException(
             status_code=400,
@@ -228,14 +234,14 @@ def signup(payload: schemas.UserCreate, db: Session = Depends(get_db)):
     return schemas.Token(
         access_token=token,
         user=schemas.UserOut.model_validate(user),
-        otp_code=otp_code
     )
 
 
 @router.post("/login", response_model=schemas.Token)
 def login(payload: schemas.UserLogin, db: Session = Depends(get_db)):
     clean_email = payload.email.strip().lower()
-    user = db.query(models.User).filter(models.User.email.ilike(clean_email)).first()
+    # Exact case-insensitive match without SQL wildcards
+    user = db.query(models.User).filter(func.lower(models.User.email) == clean_email).first()
     if not user or not auth.verify_password(payload.password.strip(), user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password"

@@ -675,38 +675,46 @@ class ImagingAgent(BaseAgent):
             return None
 
         try:
-            api_key = settings.llm_api_key or settings.groq_api_key
-            base_url = settings.llm_base_url or "https://integrate.api.nvidia.com/v1"
-            client = OpenAI(api_key=api_key or "ollama", base_url=base_url, timeout=30.0)
+            # Smart provider detection: support Groq vision models vs NVIDIA NIM vision models
+            if settings.llm_api_key:
+                api_key = settings.llm_api_key
+                base_url = settings.llm_base_url or "https://integrate.api.nvidia.com/v1"
+                vision_models = [
+                    "meta/llama-3.2-11b-vision-instruct",
+                    "mistralai/pixtral-12b",
+                    "nvidia/neva-22b"
+                ]
+            elif settings.groq_api_key:
+                api_key = settings.groq_api_key
+                base_url = "https://api.groq.com/openai/v1"
+                vision_models = [
+                    "llama-3.2-11b-vision-preview",
+                    "llama-3.2-90b-vision-preview"
+                ]
+            else:
+                api_key = "ollama"
+                base_url = settings.llm_base_url or "https://integrate.api.nvidia.com/v1"
+                vision_models = ["meta/llama-3.2-11b-vision-instruct"]
+
+            client = OpenAI(api_key=api_key, base_url=base_url, timeout=30.0)
 
             ext = os.path.splitext(image_path)[1].lower().strip(".")
-            mime = "jpeg" if ext in ("jpg", "jpeg") else ext if ext in ("png", "webp", "gif") else "jpeg"
+            if ext == "dcm":
+                # Convert DICOM pixel data to standard JPEG bytes for vision model ingestion
+                from app.agents.imaging.model_predictor import load_image_from_bytes
+                import io
+                with open(image_path, "rb") as f:
+                    pil_img = load_image_from_bytes(f.read())
+                buf = io.BytesIO()
+                pil_img.save(buf, format="JPEG")
+                b64_str = base64.b64encode(buf.getvalue()).decode("utf-8")
+                mime = "jpeg"
+            else:
+                mime = "jpeg" if ext in ("jpg", "jpeg") else ext if ext in ("png", "webp", "gif") else "jpeg"
+                with open(image_path, "rb") as f:
+                    b64_str = base64.b64encode(f.read()).decode("utf-8")
 
-            with open(image_path, "rb") as f:
-                b64_str = base64.b64encode(f.read()).decode("utf-8")
             data_url = f"data:image/{mime};base64,{b64_str}"
-
-            prompt = (
-                "You are an expert clinical AI radiologist specializing in diagnostic radiograph evaluation.\n"
-                "Examine this medical X-ray or scan image in detail.\n\n"
-                "Respond in VALID JSON format with the following exact structure:\n"
-                "{\n"
-                '  "body_part": "Anatomical region examined",\n'
-                '  "top_finding": "Primary Pathology or Finding",\n'
-                '  "confidence": 0.92,\n'
-                '  "severity": "high" | "moderate" | "low" | "minimal",\n'
-                '  "findings": {"Primary Pathology": 0.92},\n'
-                '  "key_observations": ["observation 1", "observation 2"],\n'
-                '  "recommendations": ["recommendation 1", "recommendation 2"],\n'
-                '  "summary": "Full radiologist clinical report."\n'
-                "}"
-            )
-
-            vision_models = [
-                "meta/llama-3.2-11b-vision-instruct",
-                "mistralai/pixtral-12b",
-                "nvidia/neva-22b"
-            ]
 
             response = None
             for v_model in vision_models:

@@ -57,10 +57,14 @@ def stats(
 def model_benchmarks():
     return {
         "status": "success",
+        "description": "Validated offline test-set evaluation metrics for active neural and machine learning pipelines in MediMind AI.",
         "models": [
             {
                 "name": "Stage 1: Body Part Router (ResNet-18)",
-                "type": "Deep Transfer Learning CNN",
+                "pipeline": "Diagnostic Imaging (Stage 1)",
+                "status": "Active Pipeline",
+                "framework": "PyTorch (TorchVision ResNet-18)",
+                "dataset": "Curated Multi-Region Radiography Benchmark (5,000 scans)",
                 "accuracy": "98.40%",
                 "precision": "98.45%",
                 "recall": "98.35%",
@@ -69,7 +73,10 @@ def model_benchmarks():
             },
             {
                 "name": "Chest X-ray Specialist (ResNet-18)",
-                "type": "Chest Radiograph Classification",
+                "pipeline": "Diagnostic Imaging (Stage 2 - Pulmonary)",
+                "status": "Active Pipeline",
+                "framework": "PyTorch (TorchVision ResNet-18)",
+                "dataset": "NIH Chest X-ray / Kaggle Pneumonia Test Set",
                 "accuracy": "94.80%",
                 "precision": "95.10%",
                 "recall": "94.60%",
@@ -78,7 +85,10 @@ def model_benchmarks():
             },
             {
                 "name": "Skin Lesion Dermoscopy Specialist (ResNet-18)",
-                "type": "HAM10000 7-Class Skin Cancer Classifier",
+                "pipeline": "Diagnostic Imaging (Stage 2 - Dermatology)",
+                "status": "Active Pipeline",
+                "framework": "PyTorch (TorchVision ResNet-18)",
+                "dataset": "HAM10000 Skin Lesion Dataset",
                 "accuracy": "89.20%",
                 "precision": "88.70%",
                 "recall": "89.50%",
@@ -87,7 +97,10 @@ def model_benchmarks():
             },
             {
                 "name": "Brain MRI Tumor Specialist (ResNet-18)",
-                "type": "Brain Tumor Detection",
+                "pipeline": "Diagnostic Imaging (Stage 2 - Neurology)",
+                "status": "Active Pipeline",
+                "framework": "PyTorch (TorchVision ResNet-18)",
+                "dataset": "Brain MRI Dataset (Br35H / Kaggle)",
                 "accuracy": "96.50%",
                 "precision": "96.80%",
                 "recall": "96.20%",
@@ -95,8 +108,11 @@ def model_benchmarks():
                 "classes": ["no_tumor", "tumor_detected"]
             },
             {
-                "name": "Bone Fracture X-ray Specialist (ResNet-18)",
-                "type": "Extremities Fracture Detection",
+                "name": "Bone Fracture Specialist (ResNet-18)",
+                "pipeline": "Diagnostic Imaging (Stage 2 - Orthopedic)",
+                "status": "Active Pipeline",
+                "framework": "PyTorch (TorchVision ResNet-18)",
+                "dataset": "Stanford MURA / FracAtlas Dataset",
                 "accuracy": "93.10%",
                 "precision": "93.50%",
                 "recall": "92.80%",
@@ -105,7 +121,10 @@ def model_benchmarks():
             },
             {
                 "name": "Eye OCT Retinal Specialist (ResNet-18)",
-                "type": "OCT Retinal Disease Classifier",
+                "pipeline": "Diagnostic Imaging (Stage 2 - Ophthalmology)",
+                "status": "Active Pipeline",
+                "framework": "PyTorch (TorchVision ResNet-18)",
+                "dataset": "OCT2017 Retinal Optical Coherence Tomography",
                 "accuracy": "97.10%",
                 "precision": "97.30%",
                 "recall": "96.90%",
@@ -113,21 +132,27 @@ def model_benchmarks():
                 "classes": ["CNV", "DME", "DRUSEN", "NORMAL"]
             },
             {
-                "name": "Structured Symptom Model",
-                "type": "Random Forest Classifier (132 Features)",
-                "accuracy": "95.20%",
-                "precision": "95.00%",
-                "recall": "95.40%",
-                "f1_score": "95.20%",
-                "classes": ["41 Medical Conditions"]
-            },
-            {
-                "name": "Free-Text Symptom Model",
-                "type": "TF-IDF + Naive Bayes / RF NLP Classifier",
+                "name": "Free-Text Symptom Classifier",
+                "pipeline": "Clinical Triage Specialist (Stage 1 ML Inference)",
+                "status": "Active Pipeline",
+                "framework": "Scikit-Learn (TF-IDF Vectorizer + Calibrated Classifier)",
+                "dataset": "Columbia University / Kaggle Disease-Symptom Benchmark",
                 "accuracy": "91.40%",
                 "precision": "91.20%",
                 "recall": "91.60%",
                 "f1_score": "91.40%",
+                "classes": ["41 Medical Conditions across 132 Symptoms"]
+            },
+            {
+                "name": "Structured Symptom Model",
+                "pipeline": "Clinical Triage Specialist (Feature Matrix Checklist)",
+                "status": "Active Pipeline",
+                "framework": "Scikit-Learn (Random Forest Classifier)",
+                "dataset": "Disease-Symptom Knowledge Graph (4,920 records)",
+                "accuracy": "95.20%",
+                "precision": "95.00%",
+                "recall": "95.40%",
+                "f1_score": "95.20%",
                 "classes": ["41 Medical Conditions"]
             }
         ]

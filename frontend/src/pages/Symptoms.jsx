@@ -27,6 +27,7 @@ function Symptoms3DViewer() {
 export default function Symptoms() {
   const [symptomsText, setSymptomsText] = useState('')
   const [result, setResult] = useState(null)
+  const [checkId, setCheckId] = useState(null)
   const [answers, setAnswers] = useState({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -38,8 +39,12 @@ export default function Symptoms() {
       const { data } = await api.post('/symptoms/check', {
         symptoms_text: symptomsText,
         previous_answers: previousAnswers,
+        check_id: previousAnswers ? checkId : null,
       })
       setResult(data)
+      if (data.check_id) {
+        setCheckId(data.check_id)
+      }
     } catch (err) {
       setError(err?.response?.data?.detail || 'Symptom check failed.')
     } finally {

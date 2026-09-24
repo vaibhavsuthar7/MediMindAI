@@ -18,16 +18,32 @@ def check_symptoms(
 ):
     result = orchestrator.symptom.run(payload.symptoms_text, payload.previous_answers)
 
-    record = models.SymptomCheck(
-        user_id=current_user.id,
-        symptoms_text=payload.symptoms_text,
-        follow_up_qa=json.dumps(payload.previous_answers or {}),
-        possible_conditions=json.dumps(result["possible_conditions"]),
-        urgency=result["urgency"],
-    )
-    db.add(record)
-    db.commit()
-    db.refresh(record)
+    record = None
+    if payload.check_id:
+        record = db.query(models.SymptomCheck).filter(
+            models.SymptomCheck.id == payload.check_id,
+            models.SymptomCheck.user_id == current_user.id
+        ).first()
+
+    if record:
+        # Update existing check row rather than creating a duplicate
+        record.symptoms_text = payload.symptoms_text
+        record.follow_up_qa = json.dumps(payload.previous_answers or {})
+        record.possible_conditions = json.dumps(result["possible_conditions"])
+        record.urgency = result["urgency"]
+        db.commit()
+        db.refresh(record)
+    else:
+        record = models.SymptomCheck(
+            user_id=current_user.id,
+            symptoms_text=payload.symptoms_text,
+            follow_up_qa=json.dumps(payload.previous_answers or {}),
+            possible_conditions=json.dumps(result["possible_conditions"]),
+            urgency=result["urgency"],
+        )
+        db.add(record)
+        db.commit()
+        db.refresh(record)
 
     conditions_str = ", ".join(c.get("condition", "") for c in result["possible_conditions"])
     orchestrator.index_for_rag(
@@ -39,6 +55,7 @@ def check_symptoms(
     )
 
     return schemas.SymptomResponse(
+        check_id=record.id,
         follow_up_questions=result["follow_up_questions"],
         possible_conditions=result["possible_conditions"],
         urgency=result["urgency"],

@@ -14,25 +14,50 @@ from app.utils.pdf_utils import extract_text_from_pdf
 router = APIRouter(prefix="/api/reports", tags=["reports"])
 
 
+MAX_REPORT_FILE_SIZE = 15 * 1024 * 1024  # 15 MB
+
 @router.post("/simplify", response_model=schemas.ReportSummaryResponse)
 async def simplify_report(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
+    from fastapi import HTTPException, status
     ext = os.path.splitext(file.filename)[1].lower()
     if ext != ".pdf":
-        from fastapi import HTTPException, status
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid file format. Only PDF files are supported for report simplification."
         )
 
+    contents = await file.read()
+    if len(contents) > MAX_REPORT_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="File size exceeds limit. Maximum allowed PDF size is 15 MB."
+        )
+    if len(contents) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded file is empty."
+        )
+
     saved_path = os.path.join(settings.upload_dir, f"{uuid.uuid4().hex}.pdf")
     with open(saved_path, "wb") as f:
-        f.write(await file.read())
+        f.write(contents)
 
     report_text = extract_text_from_pdf(saved_path)
+    if not report_text or len(report_text.strip()) < 30:
+        if os.path.exists(saved_path):
+            try:
+                os.remove(saved_path)
+            except Exception:
+                pass
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="No readable text layer found in this PDF. It appears to be an image-only scan or non-OCR document. Please upload a digital PDF with selectable text."
+        )
+
     result = orchestrator.report.run(report_text)
 
     record = models.ReportSummary(

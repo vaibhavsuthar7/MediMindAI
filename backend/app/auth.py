@@ -49,30 +49,18 @@ def get_current_user(
     email: Optional[str] = None
     name: Optional[str] = None
 
-    # Step 1: Try decoding with internal JWT secret
+    # Strict cryptographic signature verification
     try:
-        payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
-        sub = str(payload.get("sub"))
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret,
+            algorithms=[settings.jwt_algorithm]
+        )
+        sub = str(payload.get("sub")) if payload.get("sub") is not None else None
         email = payload.get("email")
         name = payload.get("name")
-    except Exception:
-        # Step 2: Try decoding Supabase or Clerk JWTs (extract unverified claims)
-        try:
-            payload = jwt.get_unverified_claims(token)
-            sub = str(payload.get("sub")) if payload.get("sub") is not None else None
-            email = payload.get("email") or payload.get("email_address")
-            
-            # Extract user name from user_metadata (Supabase) or top-level claims
-            user_meta = payload.get("user_metadata") or {}
-            name = (
-                user_meta.get("full_name") or
-                user_meta.get("name") or
-                payload.get("name") or
-                payload.get("first_name") or
-                (email.split("@")[0] if email else "MediMind User")
-            )
-        except Exception:
-            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
 
     if not sub and not email:
         raise credentials_exception
