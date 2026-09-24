@@ -44,14 +44,19 @@ def _init_models():
 
     _bodypart_model = load_model(bp_model_path, len(_bodypart_classes))
 
-    regions = ["chest", "skin", "brain", "bone", "eye"]
-    for reg in regions:
-        cls_path = os.path.join(BASE_DIR, f"{reg}_classes.json")
-        mdl_path = os.path.join(BASE_DIR, f"{reg}_model.pth")
-        if os.path.exists(cls_path) and os.path.exists(mdl_path):
-            with open(cls_path, "r") as f:
-                _region_classes[reg] = json.load(f)
-            _region_models[reg] = load_model(mdl_path, len(_region_classes[reg]))
+def _get_region_model(reg: str):
+    global _region_models, _region_classes
+    if reg in _region_models:
+        return _region_models[reg], _region_classes[reg]
+
+    cls_path = os.path.join(BASE_DIR, f"{reg}_classes.json")
+    mdl_path = os.path.join(BASE_DIR, f"{reg}_model.pth")
+    if os.path.exists(cls_path) and os.path.exists(mdl_path):
+        with open(cls_path, "r") as f:
+            _region_classes[reg] = json.load(f)
+        _region_models[reg] = load_model(mdl_path, len(_region_classes[reg]))
+        return _region_models[reg], _region_classes[reg]
+    return None, None
 
 def load_image_from_bytes(image_bytes: bytes) -> Image.Image:
     # 1. Try standard PIL decode
@@ -95,11 +100,9 @@ def predict(image_bytes: bytes) -> dict:
         bodypart_confidence = probs[idx].item()
 
     # Stage 2: Region Diagnosis
-    if body_part not in _region_models:
+    diag_model, classes = _get_region_model(body_part)
+    if diag_model is None or not classes:
         raise ValueError(f"No diagnosis model loaded for body part: {body_part}")
-
-    diag_model = _region_models[body_part]
-    classes = _region_classes[body_part]
 
     with torch.no_grad():
         out = diag_model(tensor)
