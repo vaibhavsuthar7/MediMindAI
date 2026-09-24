@@ -23,25 +23,24 @@ CONSULT_DOCTOR_DISEASES = {
     "gastroenteritis", "hypoglycemia", "migraine", "urinary tract infection"
 }
 
-def _init_models():
+def _init_structured_model():
     global _structured_model, _structured_le, _structured_cols
-    global _freetext_model, _freetext_vectorizer
-
     if _structured_model is not None:
         return
-
     sm_path = os.path.join(BASE_DIR, "structured_symptom_model.pkl")
     le_path = os.path.join(BASE_DIR, "structured_label_encoder.pkl")
     cols_path = os.path.join(BASE_DIR, "structured_symptom_columns.pkl")
-
-    ftm_path = os.path.join(BASE_DIR, "freetext_symptom_model.pkl")
-    vec_path = os.path.join(BASE_DIR, "freetext_vectorizer.pkl")
-
     if os.path.exists(sm_path) and os.path.exists(le_path) and os.path.exists(cols_path):
         _structured_model = joblib.load(sm_path)
         _structured_le = joblib.load(le_path)
         _structured_cols = joblib.load(cols_path)
 
+def _init_freetext_model():
+    global _freetext_model, _freetext_vectorizer
+    if _freetext_model is not None:
+        return
+    ftm_path = os.path.join(BASE_DIR, "freetext_symptom_model.pkl")
+    vec_path = os.path.join(BASE_DIR, "freetext_vectorizer.pkl")
     if os.path.exists(ftm_path) and os.path.exists(vec_path):
         _freetext_model = joblib.load(ftm_path)
         _freetext_vectorizer = joblib.load(vec_path)
@@ -55,7 +54,7 @@ def get_urgency(disease_name: str) -> str:
     return "self_care"
 
 def predict_from_checklist(symptom_list: list) -> dict:
-    _init_models()
+    _init_structured_model()
     if _structured_model is None:
         raise FileNotFoundError("Structured symptom model files not found.")
 
@@ -89,7 +88,7 @@ def predict_from_checklist(symptom_list: list) -> dict:
     }
 
 def predict_from_text(free_text: str) -> dict:
-    _init_models()
+    _init_freetext_model()
     if _freetext_model is None:
         raise FileNotFoundError("Free-text symptom model files not found.")
 
