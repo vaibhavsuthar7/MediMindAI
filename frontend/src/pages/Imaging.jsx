@@ -139,7 +139,11 @@ export default function Imaging() {
       })
       setResult(data)
     } catch (err) {
-      setError(err?.response?.data?.detail || 'X-ray vision analysis failed.')
+      if (err?.response?.status === 401) {
+        setError('Please log in or sign up first to run the Diagnostic AI scan.')
+      } else {
+        setError(err?.response?.data?.detail || err?.message || 'X-ray vision analysis failed. Please try again.')
+      }
     } finally {
       setLoading(false)
     }

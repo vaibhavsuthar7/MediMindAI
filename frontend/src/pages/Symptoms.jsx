@@ -46,7 +46,11 @@ export default function Symptoms() {
         setCheckId(data.check_id)
       }
     } catch (err) {
-      setError(err?.response?.data?.detail || 'Symptom check failed.')
+      if (err?.response?.status === 401) {
+        setError('Please log in or sign up first to run the clinical symptom triage.')
+      } else {
+        setError(err?.response?.data?.detail || err?.message || 'Symptom check failed. Please try again.')
+      }
     } finally {
       setLoading(false)
     }

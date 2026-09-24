@@ -42,7 +42,11 @@ export default function Reports() {
       })
       setResult(data)
     } catch (err) {
-      setError(err?.response?.data?.detail || 'Simplification failed.')
+      if (err?.response?.status === 401) {
+        setError('Please log in or sign up first to simplify lab reports.')
+      } else {
+        setError(err?.response?.data?.detail || err?.message || 'Simplification failed. Please try again.')
+      }
     } finally {
       setLoading(false)
     }

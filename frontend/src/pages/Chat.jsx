@@ -48,8 +48,11 @@ export default function Chat() {
     try {
       const { data } = await api.post('/chat/ask', { message: userMsg.content })
       setMessages((prev) => [...prev, { role: 'assistant', content: data.reply, sources: data.sources_used }])
-    } catch {
-      setMessages((prev) => [...prev, { role: 'assistant', content: 'Something went wrong answering that.' }])
+    } catch (err) {
+      const msg = err?.response?.status === 401
+        ? 'Please log in or sign up first to chat with MediMind AI.'
+        : (err?.response?.data?.detail || 'Something went wrong answering that.')
+      setMessages((prev) => [...prev, { role: 'assistant', content: msg }])
     } finally {
       setLoading(false)
     }

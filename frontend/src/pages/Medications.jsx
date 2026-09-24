@@ -48,7 +48,11 @@ export default function Medications() {
       })
       setResult(data)
     } catch (err) {
-      setError(err?.response?.data?.detail || 'Check failed.')
+      if (err?.response?.status === 401) {
+        setError('Please log in or sign up first to run the medication interaction check.')
+      } else {
+        setError(err?.response?.data?.detail || err?.message || 'Check failed. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
