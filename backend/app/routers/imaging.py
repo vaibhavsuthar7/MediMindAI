@@ -62,14 +62,17 @@ async def analyze_xray(
     db.commit()
     db.refresh(record)
 
-    orchestrator.index_for_rag(
-        user_id=current_user.id,
-        record_type="imaging_scan",
-        record_id=str(record.id),
-        text=(f"Chest X-ray scan '{file.filename}': top finding {result['top_finding']} "
-              f"(confidence {result['confidence']:.0%}, severity {result['severity']}). "
-              f"{result['summary']}"),
-    )
+    try:
+        orchestrator.index_for_rag(
+            user_id=current_user.id,
+            record_type="imaging_scan",
+            record_id=str(record.id),
+            text=(f"Chest X-ray scan '{file.filename}': top finding {result['top_finding']} "
+                  f"(confidence {result['confidence']:.0%}, severity {result['severity']}). "
+                  f"{result['summary']}"),
+        )
+    except Exception as rag_err:
+        print(f"[RAG Index Warning] Could not index imaging record for RAG: {rag_err}")
 
     return schemas.ImagingResponse(
         top_finding=result.get("top_finding", "Medical Scan Finding"),

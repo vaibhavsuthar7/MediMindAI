@@ -71,12 +71,15 @@ async def simplify_report(
     db.commit()
     db.refresh(record)
 
-    orchestrator.index_for_rag(
-        user_id=current_user.id,
-        record_type="report_summary",
-        record_id=str(record.id),
-        text=f"Report '{file.filename}' simplified: {result['simplified_summary']}",
-    )
+    try:
+        orchestrator.index_for_rag(
+            user_id=current_user.id,
+            record_type="report_summary",
+            record_id=str(record.id),
+            text=f"Report '{file.filename}' simplified: {result['simplified_summary']}",
+        )
+    except Exception as rag_err:
+        print(f"[RAG Index Warning] Could not index report record for RAG: {rag_err}")
 
     return schemas.ReportSummaryResponse(
         simplified_summary=result["simplified_summary"],

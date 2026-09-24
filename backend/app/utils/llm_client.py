@@ -1,18 +1,64 @@
 """
-Thin wrapper around the Groq API (free tier) so every agent talks to the
-LLM the same way. Groq is OpenAI-API-compatible and gives fast, free
-inference on open models like Llama 3.1 / Mixtral -- no local GPU needed.
-
-If GROQ_API_KEY is not set, calls fall back to a clearly-labeled canned
-response so the rest of the app still runs for demos/offline dev.
+Thin wrapper around the LLM API (NVIDIA NIM / Groq / OpenAI) so every agent talks to the
+LLM the same way with automatic model failover and JSON extraction.
 """
 import json
+import re
 from typing import Optional, Tuple, Any
 
 from app.config import settings
 
 _client: Any = None
 _client_config: Optional[Tuple[str, str, str]] = None
+
+DEPRECATED_MODELS = {
+    "meta/llama-3.1-8b-instruct",
+    "llama-3.1-8b-instruct",
+    "llama-3.1-70b-instruct",
+    "meta/llama-3.1-70b-instruct",
+    "meta/llama-3.3-70b-instruct",
+    "mistralai/mistral-large-2-instruct",
+}
+
+DEFAULT_WORKING_MODEL = "meta/llama-3.2-11b-vision-instruct"
+DEFAULT_FALLBACK_MODEL = "meta/llama-3.2-90b-vision-instruct"
+
+
+def extract_json_from_text(raw: str) -> dict:
+    """Safely extract valid JSON from raw LLM responses (stripping markdown fences, prefix notes, etc.)."""
+    if not raw or not isinstance(raw, str):
+        return {}
+
+    # 1. Direct parsing
+    try:
+        parsed = json.loads(raw.strip())
+        if isinstance(parsed, dict):
+            return parsed
+    except Exception:
+        pass
+
+    # 2. Markdown fence ```json ... ```
+    match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", raw)
+    if match:
+        try:
+            parsed = json.loads(match.group(1).strip())
+            if isinstance(parsed, dict):
+                return parsed
+        except Exception:
+            pass
+
+    # 3. Outer brace slice
+    first_b = raw.find("{")
+    last_b = raw.rfind("}")
+    if first_b != -1 and last_b != -1 and last_b > first_b:
+        try:
+            parsed = json.loads(raw[first_b : last_b + 1])
+            if isinstance(parsed, dict):
+                return parsed
+        except Exception:
+            pass
+
+    return {}
 
 
 def _get_client_and_model() -> Tuple[Any, str]:
@@ -23,6 +69,10 @@ def _get_client_and_model() -> Tuple[Any, str]:
     model = settings.llm_model or settings.groq_model
     base_url = settings.llm_base_url or None
 
+    # Auto-upgrade deprecated/expired model names
+    if not model or model.strip() in DEPRECATED_MODELS:
+        model = DEFAULT_WORKING_MODEL
+
     if not api_key and not base_url:
         return None, model
 
@@ -30,7 +80,7 @@ def _get_client_and_model() -> Tuple[Any, str]:
     if _client is None or _client_config != current_config:
         if base_url:
             from openai import OpenAI
-            _client = OpenAI(api_key=api_key or "ollama", base_url=base_url)
+            _client = OpenAI(api_key=api_key or "ollama", base_url=base_url, timeout=45.0)
         else:
             from groq import Groq
             _client = Groq(api_key=api_key)
@@ -40,7 +90,7 @@ def _get_client_and_model() -> Tuple[Any, str]:
 
 
 def chat_completion(system_prompt: str, user_prompt: str, json_mode: bool = False) -> str:
-    """Call the LLM (NVIDIA NIM / Groq / Qwen / OpenRouter / Ollama). Returns plain text or JSON string."""
+    """Call the active LLM with automatic model failover and robust output formatting."""
     client, model = _get_client_and_model()
 
     if client is None:
@@ -51,30 +101,38 @@ def chat_completion(system_prompt: str, user_prompt: str, json_mode: bool = Fals
             "[Demo mode: no API key configured. Add GROQ_API_KEY or LLM_API_KEY in backend/.env to get real AI answers.]"
         )
 
-    kwargs = {}
-    if json_mode:
-        kwargs["response_format"] = {"type": "json_object"}
-
-    # Try primary model first, fallback to mistral/alternate model if loaded/errored
+    # Prepare model priority list
     models_to_try = [model]
-    fallback_model = settings.llm_fallback_model
-    if fallback_model and fallback_model != model:
-        models_to_try.append(fallback_model)
+    if DEFAULT_WORKING_MODEL not in models_to_try:
+        models_to_try.append(DEFAULT_WORKING_MODEL)
+    if DEFAULT_FALLBACK_MODEL not in models_to_try:
+        models_to_try.append(DEFAULT_FALLBACK_MODEL)
+
+    enriched_system_prompt = system_prompt
+    if json_mode:
+        enriched_system_prompt += "\n\nCRITICAL: Respond ONLY with valid, parseable JSON conforming to the requested schema. Do not enclose in markdown fences, do not output explanations outside JSON."
 
     last_error = None
     for m in models_to_try:
+        if m in DEPRECATED_MODELS:
+            continue
         try:
             completion = client.chat.completions.create(
                 model=m,
                 messages=[
-                    {"role": "system", "content": system_prompt},
+                    {"role": "system", "content": enriched_system_prompt},
                     {"role": "user", "content": user_prompt},
                 ],
-                temperature=0.3,
+                temperature=0.2,
                 max_tokens=1024,
-                **kwargs,
             )
-            return completion.choices[0].message.content
+            content = completion.choices[0].message.content
+            if content and content.strip():
+                if json_mode:
+                    parsed = extract_json_from_text(content)
+                    if parsed:
+                        return json.dumps(parsed)
+                return content
         except Exception as e:
             print(f"[LLM Client] Model {m} failed/overloaded: {e}. Trying fallback...")
             last_error = e
@@ -82,5 +140,3 @@ def chat_completion(system_prompt: str, user_prompt: str, json_mode: bool = Fals
     if json_mode:
         return json.dumps({"error": str(last_error)})
     return f"[LLM response error: {last_error}]"
-
-

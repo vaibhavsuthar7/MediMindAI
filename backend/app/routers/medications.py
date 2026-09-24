@@ -29,14 +29,17 @@ def check_medication(
     db.commit()
     db.refresh(record)
 
-    orchestrator.index_for_rag(
-        user_id=current_user.id,
-        record_type="medication_check",
-        record_id=str(record.id),
-        text=(f"Medication check: considering '{payload.new_medication}' alongside "
-              f"{', '.join(payload.current_medications) or 'no other medications'}. "
-              f"Risk level: {result['risk_level']}. Advice: {result['advice']}"),
-    )
+    try:
+        orchestrator.index_for_rag(
+            user_id=current_user.id,
+            record_type="medication_check",
+            record_id=str(record.id),
+            text=(f"Medication check: considering '{payload.new_medication}' alongside "
+                  f"{', '.join(payload.current_medications) or 'no other medications'}. "
+                  f"Risk level: {result['risk_level']}. Advice: {result['advice']}"),
+        )
+    except Exception as rag_err:
+        print(f"[RAG Index Warning] Could not index medication record for RAG: {rag_err}")
 
     return schemas.MedicationResponse(
         interactions_found=result["interactions_found"],

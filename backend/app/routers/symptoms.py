@@ -45,14 +45,20 @@ def check_symptoms(
         db.commit()
         db.refresh(record)
 
-    conditions_str = ", ".join(c.get("condition", "") for c in result["possible_conditions"])
-    orchestrator.index_for_rag(
-        user_id=current_user.id,
-        record_type="symptom_check",
-        record_id=str(record.id),
-        text=(f"Symptom check: '{payload.symptoms_text}'. Possible conditions considered: "
-              f"{conditions_str}. Urgency assessed as {result['urgency']}."),
-    )
+    try:
+        conditions_str = ", ".join(
+            (c.get("condition", "") if isinstance(c, dict) else str(c))
+            for c in result.get("possible_conditions", [])
+        )
+        orchestrator.index_for_rag(
+            user_id=current_user.id,
+            record_type="symptom_check",
+            record_id=str(record.id),
+            text=(f"Symptom check: '{payload.symptoms_text}'. Possible conditions considered: "
+                  f"{conditions_str}. Urgency assessed as {result.get('urgency', 'consult_doctor')}."),
+        )
+    except Exception as rag_err:
+        print(f"[RAG Index Warning] Could not index symptom record for RAG: {rag_err}")
 
     return schemas.SymptomResponse(
         check_id=record.id,
